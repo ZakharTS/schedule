@@ -2,7 +2,7 @@ package parser;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.util.*;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -10,41 +10,67 @@ import org.apache.poi.ss.util.CellRangeAddress;
 public class Parser {
     public static String parseFile(InputStream fileContent) throws IOException {
         String output = "";
+        Map<String, List<Lesson>>  lessonsByGroups = new HashMap<>();
         try (Workbook workbook = WorkbookFactory.create(fileContent)) {
             Sheet sheet = workbook.getSheetAt(0);
-            Cell cell1 = sheet.getRow(21).getCell(3);
-            output += cell1.getStringCellValue() + "<br>";
-            cell1 = sheet.getRow(21).getCell(4);
-            output += cell1.getStringCellValue() + "<br>";
-
             Iterator<Row> rowIterator = sheet.rowIterator();
-            output += "<table border=\"1px solid black\">";
+//            output += "<table border=\"1px solid black\">";
             while (rowIterator.hasNext()) {
-                output += "<tr>";
                 Row row = rowIterator.next();
                 Iterator<Cell> cellIterator = row.cellIterator();
+
                 while(cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-                    String cellData = null;
-                    int cellRow = cell.getRowIndex();
-                    int cellColumn = cell.getColumnIndex();
-                    cell = findMerge(cell, sheet);
-                    if (cell.getCellType() == CellType.STRING) {
-                        cellData = cell.getStringCellValue();
-                    } else if (cell.getCellType() == CellType.NUMERIC) {
-                        cellData = String.valueOf((int)cell.getNumericCellValue());
+                    String cellData = getCellData(cell, sheet);
+
+                    if (!Lesson.isGroupName(cellData)) {
+                        break;
                     }
-                    if (cellData == null) continue;
-                    System.out.println(cellData);
-                    output += "<td>" + cellData + "</td>";
+                    cellData = Lesson.formatGroupName(cellData);
+
+                    if (!lessonsByGroups.containsKey(cellData)) {
+                        List<Lesson> tmpList = new ArrayList<>();
+                        lessonsByGroups.put(cellData, tmpList);
+                    }
+//                    if (cellData == null) continue;
+
                 }
-                output += "</tr>";
             }
             output += "</table>";
+        } catch (IOException e) {
+            e.printStackTrace();
+            return output;
         }
         return output;
     }
-    private static Cell findMerge(Cell cell, Sheet sheet) {
+
+    protected static String getCellData(Cell cell, Sheet sheet) {
+        String cellData = null;
+        cell = findMerge(cell, sheet);
+        switch (cell.getCellType()) {
+            case STRING:
+                cellData = cell.getStringCellValue();
+                break;
+            case NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    cellData = String.valueOf(cell.getDateCellValue());
+                } else {
+                    cellData = String.valueOf((int)cell.getNumericCellValue());
+                }
+                break;
+
+            case BOOLEAN:
+                cellData = String.valueOf(cell.getBooleanCellValue());
+                break;
+
+            case FORMULA:
+                cellData = String.valueOf(cell.getCellFormula());
+                break;
+        }
+
+        return cellData;
+    }
+    protected static Cell findMerge(Cell cell, Sheet sheet) {
         int cellRow = cell.getRowIndex();
         int cellColumn = cell.getColumnIndex();
         for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
