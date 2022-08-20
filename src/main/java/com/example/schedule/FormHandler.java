@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 
+import parser.Parser;
+
 @WebServlet("/form-handler")
 @MultipartConfig
 public class FormHandler extends HttpServlet {
@@ -26,7 +28,11 @@ public class FormHandler extends HttpServlet {
         out.print("<body>Uploading...<br>");
         Part filePart = request.getPart("xl-table");
         String fileName = filePart.getName();
-        // call parser
+        try (InputStream fileContent = filePart.getInputStream()) {
+            out.print(Parser.parseFile(fileContent));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         out.print("</body>");
         out.close();
     }
