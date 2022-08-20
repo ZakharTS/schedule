@@ -1,0 +1,9 @@
+@font-face {
+	font-family: "Undertale";
+	src: url("../Fonts/UndertaleFont/Undertale-Battle-Font.eot");
+	src: url("../Fonts/UndertaleFont/Undertale-Battle-Font.eot?#iefix") format("embedded-opentype"),
+			 url("../Fonts/UndertaleFont/Undertale-Battle-Font.woff") format("woff"),
+			 url("../Fonts/UndertaleFont/Undertale-Battle-Font.ttf") format("truetype");
+	font-style: normal;
+	font-weight: normal;
+}

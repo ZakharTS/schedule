@@ -1,0 +1,61 @@
+@import 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap';
+
+.logo {
+    display: inline-block;
+    vertical-align: middle;
+    height: auto;
+    max-width: 4rem;
+}
+
+.special {
+    font-family: Undertale, serif;
+    font-size: xx-large;
+    color: #006bb4ff;
+    display: inline-block;
+    margin-left: 0.5rem;
+    vertical-align: middle;
+}
+
+  hr {
+    border: none; /* Убираем границу */
+    background-color: #006bb4ff; /* Цвет линии */
+    color: #006bb4ff;
+    height: 2px; /* Толщина линии */
+    width: 98% ;
+   }
+
+.links{
+    text-align: center;
+}
+
+html,
+body {
+  height: 100%;
+}
+#wrap {
+  min-height: 100%;
+}
+main {
+  padding-bottom: 100px;
+  /*Высота футера*/
+}
+footer {
+  margin-top: -100px;
+  /*Минус Высота футера*/
+  height: 100px;
+  /*Высота футера*/
+}
+footer p{
+    color:darkgray;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+body {
+    background: #ffff;
+}
+@media (prefers-color-scheme: dark) {
+
+    body{
+        background: #444343;
+    }
+    }

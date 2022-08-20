@@ -1,0 +1,28 @@
+.monkey{
+    display: flex;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.error-code{
+    display: block;
+
+    text-align: center;
+
+    font-family: Undertale, serif;
+
+    font-size: 2000%;
+
+    color: #006bb4ff;
+}
+.error-text{
+    display: block;
+
+    text-align: center;
+
+    font-family: Undertale, serif;
+
+    font-size: 200%;
+
+    color: #006bb4ff;
+}
