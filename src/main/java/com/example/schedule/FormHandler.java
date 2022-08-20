@@ -1,29 +1,33 @@
 package com.example.schedule;
 
+import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 
-@WebServlet(name = "formHandler", value = "/form-handler")
+@WebServlet("/form-handler")
+@MultipartConfig
 public class FormHandler extends HttpServlet {
 
     public void init() {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         response.setContentType("text/html");
 
-        HttpSession in = request.getSession();
-
         PrintWriter out = response.getWriter();
+
         out.print("<head><title>Form Handler</title></head>");
-        out.print("<body>Your name is " + request.getParameter("name") + "</body>");
+        out.print("<body>Uploading...<br>");
+        Part filePart = request.getPart("xl-table");
+        String fileName = filePart.getName();
+        // call parser
+        out.print("</body>");
         out.close();
     }
 
