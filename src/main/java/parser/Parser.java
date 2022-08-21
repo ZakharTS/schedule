@@ -10,36 +10,46 @@ import org.apache.poi.ss.util.CellRangeAddress;
 public class Parser {
     public static String parseFile(InputStream fileContent) throws IOException {
         String output = "";
-        Map<String, List<Lesson>>  lessonsByGroups = new HashMap<>();
+        Map<String, List<Lesson>> lessonsByGroups = new HashMap<>();
         try (Workbook workbook = WorkbookFactory.create(fileContent)) {
             Sheet sheet = workbook.getSheetAt(0);
             Iterator<Row> rowIterator = sheet.rowIterator();
+            boolean isGroupRowPassed = false;
+            int groupRowIndex;
 //            output += "<table border=\"1px solid black\">";
             while (rowIterator.hasNext()) {
                 Row row = rowIterator.next();
                 Iterator<Cell> cellIterator = row.cellIterator();
+                if (!isGroupRowPassed) {
+                    while (cellIterator.hasNext()) {
+                        Cell cell = cellIterator.next();
+                        String cellData = getCellData(cell, sheet);
 
-                while(cellIterator.hasNext()) {
-                    Cell cell = cellIterator.next();
-                    String cellData = getCellData(cell, sheet);
+                        if (!Lesson.isGroupName(cellData)) {
+                            if (Lesson.isDay(cellData)) {
+                                isGroupRowPassed = true;
+                            }
+                            break;
+                        }
+                        groupRowIndex = cell.getRowIndex();
+                        cellData = Lesson.formatGroupName(cellData);
 
-                    if (!Lesson.isGroupName(cellData)) {
-                        break;
-                    }
-                    cellData = Lesson.formatGroupName(cellData);
-
-                    if (!lessonsByGroups.containsKey(cellData)) {
-                        List<Lesson> tmpList = new ArrayList<>();
-                        lessonsByGroups.put(cellData, tmpList);
-                    }
+                        if (!lessonsByGroups.containsKey(cellData)) {
+                            List<Lesson> tmpList = new ArrayList<>();
+                            lessonsByGroups.put(cellData, tmpList);
+                        }
 //                    if (cellData == null) continue;
+                    }
+                } else {
+                    while (cellIterator.hasNext()) {
+                        Cell cell = cellIterator.next();
 
+                    }
                 }
             }
-            output += "</table>";
+//            output += "</table>";
         } catch (IOException e) {
             e.printStackTrace();
-            return output;
         }
         return output;
     }
@@ -55,7 +65,7 @@ public class Parser {
                 if (DateUtil.isCellDateFormatted(cell)) {
                     cellData = String.valueOf(cell.getDateCellValue());
                 } else {
-                    cellData = String.valueOf((int)cell.getNumericCellValue());
+                    cellData = String.valueOf((int) cell.getNumericCellValue());
                 }
                 break;
 
@@ -70,6 +80,7 @@ public class Parser {
 
         return cellData;
     }
+
     protected static Cell findMerge(Cell cell, Sheet sheet) {
         int cellRow = cell.getRowIndex();
         int cellColumn = cell.getColumnIndex();
